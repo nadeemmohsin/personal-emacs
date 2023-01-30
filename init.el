@@ -64,15 +64,6 @@
 ;; Orderless for fuzzy completion.
 (use-package orderless
   :init
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-  ;; (setq completion-in-region-function
-  ;; 	(lambda (&rest args)
-  ;; 	  (apply (if vertico-mode
-  ;; 		     #'consult-completion-in-region
-  ;; 		   #'completion--in-region)
-  ;; 		 args)))
   (setq completion-styles '(substring orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
@@ -92,17 +83,15 @@
 
 ;; Helpful and which-key to make life easier.
 (use-package helpful
-  :commands (helpful-callable helpful-variable helpful-command helpful-key)
-  :bind
-  ([remap describe-command] . helpful-command)
-  ([remap describe-key] . helpful-key))
+  :commands (helpful-callable helpful-variable helpful-command helpful-key))
 
 (use-package which-key
   :defer 0
   :diminish which-key-mode
   :config
   (which-key-mode)
-  (setq which-key-idle-delay 1))
+  (setq which-key-max-display-columns 6)
+  (setq which-key-idle-delay 0.5))
 
 ;; Themes and Modelines
 (use-package doom-themes
@@ -122,8 +111,11 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
+
   :config
   (evil-mode 1)
+
+  ;; TODO: Can this be done more neatly using general?
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
   (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
@@ -146,11 +138,75 @@
   (evil-collection-init))
 
 
+;; Mimic the nice stuff in Doom with general.el
+(use-package general
+  :config
+  (general-evil-setup t)
+
+  ;; Set Space as the leader a la Doom.
+  (defconst my-leader "SPC")
+  (general-create-definer my-leader-def
+    :prefix my-leader)
+  (general-override-mode) ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
+
+  ;; Doom-style hotkeys.
+  (my-leader-def
+    :states '(motion normal visual)
+    :keymaps 'override ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
+
+    ;; Equivalent to C-u
+    "u" '(universal-argument :which-key "Universal argument")
+
+    ;; Eval Lisp regions.
+    ";" '(eval-region :which-key "eval-region")
+
+    ;; Projectile
+    "p" '(:ignore t :which-key "Projectile")
+    "p." '(projectile-find-file :which-key "Projectile find file")
+    "p>" '(projectile-find-file-other-window :which-key "Projectile find file (new window)")
+
+    ;; Files.
+    "." '(find-file :which-key "Find file")
+    ">" '(find-file-other-window :which-key "Find file (new window)")
+
+    ;; Buffer management.
+    "," '(consult-buffer :which-key "Switch buffer")
+    "x" '(open-scratch-buffer :which-key "Open scratch buffer")
+    "b" '(:ignore t :which-key "Buffers")
+    "bb" '(consult-buffer :which-key "Switch buffer")
+    "bl" '(evil-switch-to-windows-last-buffer :which-key "Switch to last buffer")
+    "bk" '(kill-current-buffer :which-key "Kill current buffer")
+    "bd" '(kill-buffer :which-key "Kill buffer")
+    "br" '(revert-buffer-quick :which-key "Revert buffer")
+
+    ;; Window management.
+    "o" '(other-window :which-key "Switch window")
+    "O" '(ace-window :which-key "Find window")
+    "w" '(:ignore t :which-key "Windows")
+    "wh" '(evil-window-split :which-key "Horizontal split")
+    "wv" '(evil-window-vsplit :which-key "Vertical split")
+    "wd" '(evil-window-delete :which-key "Delete window")
+    "ww" '(delete-other-windows :which-key "Delete other windows")
+    
+    ;; Dired.
+    "d" '(dired-jump :which-key "dired-jump")
+
+    ;; help
+    "h" '(:ignore t :which-key "Help")
+    "hf" '(helpful-callable :which-key "Describe function")
+    "hk" '(helpful-key :which-key "Describe key")
+    "hv" '(helpful-variable :which-key "Describe variable")
+    "ho" '(helpful-symbol :which-key "Describe symbol")
+    "hm" '(describe-mode :which-key "Describe mode")
+    "hF" '(describe-face :which-key "Describe face")
+    "hw" '(where-is :which-key "where-is")
+    "h." '(display-local-help :which-key "Display local help")))
+
+
 ;; Dired setup.
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
-  :bind (("C-x C-j" . dired-jump))
   :custom ((dired-listing-switches "-agho --group-directories-first"))
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
