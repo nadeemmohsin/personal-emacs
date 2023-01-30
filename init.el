@@ -137,6 +137,16 @@
   :config
   (evil-collection-init))
 
+;; Because mucking around with surroundings is always cool.
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1))
+
+;; Comments.
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode))
 
 ;; Mimic the nice stuff in Doom with general.el
 (use-package general
