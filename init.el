@@ -1,12 +1,9 @@
 ;; Basic UI customizations.
-(setq inhibit-startup-message t) 
+(setq inhibit-startup-message t)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (menu-bar-mode -1)
-
-;; Bit of breathing room on the side.
-(set-fringe-mode 10)
 
 ;; Fix the default jerky scrolling.
 (setq scroll-step 1)
@@ -17,6 +14,10 @@
 ;; Keep customized variables in a separate file.
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file 'noerror)
+
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
+
 
 ;; Initialize package archives.
 (require 'package)
@@ -69,10 +70,7 @@
         completion-category-overrides '((file (styles partial-completion)))))
 
 ;; Consult
-(use-package consult
-  :bind (("C-s" . consult-line)
-	 ("M-m" . consult-buffer)
-	 ("M-M" . consult-buffer-other-window)))
+(use-package consult)
 
 
 ;; Ace-window for easy window switching.
@@ -132,6 +130,15 @@
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
+
+;; Turn off Evil mode for terminals.
+(defun nadeem/emacs-mode-only-hook ()
+  (dolist (mode '(term-mode
+		  vterm-mode
+		  shell-mode
+		  git-rebase-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
 (use-package evil-collection
   :after evil
   :config
@@ -184,6 +191,7 @@
     "x" '(open-scratch-buffer :which-key "Open scratch buffer")
     "b" '(:ignore t :which-key "Buffers")
     "bb" '(consult-buffer :which-key "Switch buffer")
+    "bB" '(ibuffer-list-buffers :which-key "Interactive buffer list")
     "bl" '(evil-switch-to-windows-last-buffer :which-key "Switch to last buffer")
     "bk" '(kill-current-buffer :which-key "Kill current buffer")
     "bd" '(kill-buffer :which-key "Kill buffer")
@@ -197,7 +205,11 @@
     "wv" '(evil-window-vsplit :which-key "Vertical split")
     "wd" '(evil-window-delete :which-key "Delete window")
     "ww" '(delete-other-windows :which-key "Delete other windows")
-    
+
+    ;; Search
+    "s" '(:ignore t :which-key "Search")
+    "ss" '(consult-line :which-key "Find line")
+
     ;; Dired.
     "d" '(dired-jump :which-key "dired-jump")
 
@@ -243,6 +255,9 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
+;; Highlight current line.
+(global-hl-line-mode 1)
+
 ;; Rainbow delimiters
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -255,5 +270,15 @@
 (setq uniquify-after-kill-buffer-p t)     ;; Rename after killing uniquified buffers.
 (setq uniquify-ignore-buffers-re "^\\*")  ;; Don't mess with special buffers.
 
-;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
+;; Show column numbers everywhere.
+(column-number-mode)
+
+;; Line numbers everywhere except for shells and Org.
+(global-display-line-numbers-mode t)
+
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		vterm-mode-hook
+		shell-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
