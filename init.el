@@ -15,10 +15,6 @@
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file 'noerror)
 
-;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
-
-
 ;; Initialize package archives.
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -213,6 +209,13 @@
     ;; Dired.
     "d" '(dired-jump :which-key "dired-jump")
 
+    ;; LSP
+    "l" '(:ignore t :which-key "LSP")
+    "l." '(lsp-find-definition :which-key "Find definition")
+    "l>" '(lsp-find-references :which-key "Find references")
+    "lr" '(lsp-rename :which-key "Rename")
+    "ld" '(lsp-describe-thing-at-point :which-key "Describe symbol")
+
     ;; help
     "h" '(:ignore t :which-key "Help")
     "hf" '(helpful-callable :which-key "Describe function")
@@ -280,5 +283,40 @@
 		term-mode-hook
 		vterm-mode-hook
 		shell-mode-hook
-		eshell-mode-hook))
+		eshell-mode-hook
+		dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+
+;; Go programming support.
+(use-package go-mode)
+
+;; Protobuf-mode isn't in a package repository, so we
+;; pull it from our own unpackaged directory.
+;; For reference, this lives at:
+;; https://github.com/protocolbuffers/protobuf/blob/main/editors/protobuf-mode.el
+(add-to-list 'load-path (concat user-emacs-directory "unpackaged"))
+(add-to-list 'auto-mode-alist '("\\.proto$" . protobuf-mode))
+(require 'protobuf-mode)
+
+;; Note that this requires installing gopls.
+;; $ go get golang.org/x/tools/gopls@latest
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (lsp-enable-which-key-integration t)
+  :hook
+  ((go-mode) . lsp))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-doc-enable t))
+
+;; Set the garbage collection threshold to high (100 MB)
+;; since LSP client-server communication generates a lot of output/garbage
+(setq gc-cons-threshold 100000000)
+;; To increase the amount of data Emacs reads from a process
+(setq read-process-output-max (* 1024 1024)) 
