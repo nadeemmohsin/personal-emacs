@@ -8,6 +8,15 @@
 ;; Fix the default jerky scrolling.
 (setq scroll-step 1)
 
+;; Use y/n instead of overly cumbersome yes/no.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Overwrite selection on paste.
+(delete-selection-mode t)
+
+;; Follow symlinks automatically.
+(setq vc-follow-symlinks t)
+
 ;; Put backup files in a separate directory.
 (setq backup-directory-alist `(("." . "~/.emacs.bak")))
 
@@ -30,6 +39,12 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; Natural zoom.
+(use-package emacs
+  :init
+  (global-set-key (kbd "C-=") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease))
 
 
 ;; Vertico
