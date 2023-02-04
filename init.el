@@ -105,78 +105,8 @@
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key))
 
-(use-package which-key
-  :defer 0
-  :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-max-display-columns 6)
-  (setq which-key-idle-delay 0.5))
 
-;; Themes and Modelines
-(use-package doom-themes
-  :init (load-theme 'doom-one t))
-
-(use-package all-the-icons)
-
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
-
-
-;; Evil mode
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-
-  :config
-  (evil-mode 1)
-
-  ;; TODO: Can this be done more neatly using general?
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-  (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
-  (define-key evil-insert-state-map (kbd "C-e") 'evil-end-of-line)
-  (define-key evil-visual-state-map (kbd "C-e") 'evil-end-of-line)
-  (define-key evil-normal-state-map (kbd "C-a") 'evil-beginning-of-line)
-  (define-key evil-insert-state-map (kbd "C-a") 'evil-beginning-of-line)
-  (define-key evil-visual-state-map (kbd "C-a") 'evil-beginning-of-line)
-
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
-
-
-;; Turn off Evil mode for terminals.
-(defun nadeem/emacs-mode-only-hook ()
-  (dolist (mode '(term-mode
-		  vterm-mode
-		  shell-mode
-		  git-rebase-mode))
-    (add-to-list 'evil-emacs-state-modes mode)))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
-
-;; Because mucking around with surroundings is always cool.
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode 1))
-
-;; Comments.
-(use-package evil-commentary
-  :after evil
-  :config
-  (evil-commentary-mode))
-
+;; Some functions for going to frequently used files or buffers.
 (defun nadeemm/open-scratch-buffer ()
   (interactive)
   (switch-to-buffer "*scratch*"))
@@ -281,6 +211,87 @@
     "h w" '(where-is :which-key "where-is")
     "h ." '(display-local-help :which-key "Display local help")))
 
+
+
+
+(use-package which-key
+  :defer 0
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+  (setq which-key-max-display-columns 6)
+  (setq which-key-idle-delay 0.5))
+
+;; Themes and Modelines
+(use-package doom-themes
+  :init (load-theme 'doom-one t))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+
+;; Evil mode
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+
+  :config
+  (evil-mode 1)
+
+  ;; TODO: Can this be done more neatly using general?
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
+  (define-key evil-insert-state-map (kbd "C-e") 'evil-end-of-line)
+  (define-key evil-visual-state-map (kbd "C-e") 'evil-end-of-line)
+  (define-key evil-normal-state-map (kbd "C-a") 'evil-beginning-of-line)
+  (define-key evil-insert-state-map (kbd "C-a") 'evil-beginning-of-line)
+  (define-key evil-visual-state-map (kbd "C-a") 'evil-beginning-of-line)
+
+  ;; Use visual line motions even outside of visual-line-mode buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+
+;; Turn off Evil mode for terminals.
+(defun nadeem/emacs-mode-only-hook ()
+  (dolist (mode '(term-mode
+		  vterm-mode
+		  shell-mode
+		  git-rebase-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+;; Because mucking around with surroundings is always cool.
+(use-package evil-surround
+  :general
+  (:states 'operator
+	   "s" 'evil-surround-edit
+	   "S" 'evil-Surround-edit)
+  (:states 'visual
+	   "S" 'evil-surround-region
+	   "gS" 'evil-Surround-region)
+  :config
+  (global-evil-surround-mode 1))
+
+;; Comments.
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode))
 
 ;; Dired setup.
 (use-package dired
