@@ -151,6 +151,18 @@
   :config
   (evil-commentary-mode))
 
+(defun nadeemm/open-scratch-buffer ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+
+(defun nadeemm/open-gitconfig ()
+  (interactive)
+  (find-file "~/.gitconfig")) 
+
+(defun nadeemm/open-init-file ()
+  (interactive)
+  (find-file (concat user-emacs-directory "init.el"))) 
+
 ;; Mimic the nice stuff in Doom with general.el
 (use-package general
   :config
@@ -173,10 +185,15 @@
     ;; Eval Lisp regions.
     ";" '(eval-region :which-key "eval-region")
 
+    ;; Config
+    "c" '(:ignore t :which-key "Config")
+    "c g" '(nadeemm/open-gitconfig :which-key "Open .gitconfig")
+    "c i" '(nadeemm/open-init-file :which-key "Open init.el")
+    
     ;; Projectile
     "p" '(:ignore t :which-key "Projectile")
-    "p." '(projectile-find-file :which-key "Projectile find file")
-    "p>" '(projectile-find-file-other-window :which-key "Projectile find file (new window)")
+    "p ." '(projectile-find-file :which-key "Projectile find file")
+    "p >" '(projectile-find-file-other-window :which-key "Projectile find file (new window)")
 
     ;; Files.
     "." '(find-file :which-key "Find file")
@@ -184,27 +201,28 @@
 
     ;; Buffer management.
     "," '(consult-buffer :which-key "Switch buffer")
-    "x" '(open-scratch-buffer :which-key "Open scratch buffer")
+    "x" '(nadeemm/open-scratch-buffer :which-key "Open scratch buffer")
+
     "b" '(:ignore t :which-key "Buffers")
-    "bb" '(consult-buffer :which-key "Switch buffer")
-    "bB" '(ibuffer-list-buffers :which-key "Interactive buffer list")
-    "bl" '(evil-switch-to-windows-last-buffer :which-key "Switch to last buffer")
-    "bk" '(kill-current-buffer :which-key "Kill current buffer")
-    "bd" '(kill-buffer :which-key "Kill buffer")
-    "br" '(revert-buffer-quick :which-key "Revert buffer")
+    "b b" '(consult-buffer :which-key "Switch buffer")
+    "b B" '(ibuffer-list-buffers :which-key "Interactive buffer list")
+    "b l" '(evil-switch-to-windows-last-buffer :which-key "Switch to last buffer")
+    "b k" '(kill-current-buffer :which-key "Kill current buffer")
+    "b d" '(kill-buffer :which-key "Kill buffer")
+    "b r" '(revert-buffer-quick :which-key "Revert buffer")
 
     ;; Window management.
     "o" '(other-window :which-key "Switch window")
     "O" '(ace-window :which-key "Find window")
     "w" '(:ignore t :which-key "Windows")
-    "wh" '(evil-window-split :which-key "Horizontal split")
-    "wv" '(evil-window-vsplit :which-key "Vertical split")
-    "wd" '(evil-window-delete :which-key "Delete window")
-    "ww" '(delete-other-windows :which-key "Delete other windows")
+    "w h" '(evil-window-split :which-key "Horizontal split")
+    "w v" '(evil-window-vsplit :which-key "Vertical split")
+    "w d" '(evil-window-delete :which-key "Delete window")
+    "w w" '(delete-other-windows :which-key "Delete other windows")
 
     ;; Search
     "s" '(:ignore t :which-key "Search")
-    "ss" '(consult-line :which-key "Find line")
+    "s s" '(consult-line :which-key "Find line")
 
     ;; Dired.
     "d" '(dired-jump :which-key "dired-jump")
@@ -212,20 +230,20 @@
     ;; LSP
     "l" '(:ignore t :which-key "LSP")
     "l." '(lsp-find-definition :which-key "Find definition")
-    "l>" '(lsp-find-references :which-key "Find references")
-    "lr" '(lsp-rename :which-key "Rename")
-    "ld" '(lsp-describe-thing-at-point :which-key "Describe symbol")
+    "l >" '(lsp-find-references :which-key "Find references")
+    "l r" '(lsp-rename :which-key "Rename")
+    "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol")
 
     ;; help
     "h" '(:ignore t :which-key "Help")
-    "hf" '(helpful-callable :which-key "Describe function")
-    "hk" '(helpful-key :which-key "Describe key")
-    "hv" '(helpful-variable :which-key "Describe variable")
-    "ho" '(helpful-symbol :which-key "Describe symbol")
-    "hm" '(describe-mode :which-key "Describe mode")
-    "hF" '(describe-face :which-key "Describe face")
-    "hw" '(where-is :which-key "where-is")
-    "h." '(display-local-help :which-key "Display local help")))
+    "h f" '(helpful-callable :which-key "Describe function")
+    "h k" '(helpful-key :which-key "Describe key")
+    "h v" '(helpful-variable :which-key "Describe variable")
+    "h o" '(helpful-symbol :which-key "Describe symbol")
+    "h m" '(describe-mode :which-key "Describe mode")
+    "h F" '(describe-face :which-key "Describe face")
+    "h w" '(where-is :which-key "where-is")
+    "h ." '(display-local-help :which-key "Display local help")))
 
 
 ;; Dired setup.
