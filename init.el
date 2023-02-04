@@ -125,13 +125,13 @@
   (general-evil-setup t)
 
   ;; Set Space as the leader a la Doom.
-  (defconst nadeemm-leader "SPC")
-  (general-create-definer nadeemm-leader-def
-    :prefix nadeemm-leader)
+  (defconst nadeemm/leader "SPC")
+  (general-create-definer nadeemm/leader-def
+    :prefix nadeemm/leader)
   (general-override-mode) ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
 
   ;; Doom-style hotkeys.
-  (nadeemm-leader-def
+  (nadeemm/leader-def
     :states '(motion normal visual)
     :keymaps 'override ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
 
