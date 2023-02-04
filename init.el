@@ -68,6 +68,14 @@
 ;; Consult
 (use-package consult)
 
+;; Embark
+(use-package embark
+  :bind
+  (("C-;" . embark-act)))
+
+(use-package embark-consult
+  :after (embark consult))
+
 
 ;; Ace-window for easy window switching.
 (use-package ace-window
