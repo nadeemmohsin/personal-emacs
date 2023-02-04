@@ -66,7 +66,10 @@
         completion-category-overrides '((file (styles partial-completion)))))
 
 ;; Consult
-(use-package consult)
+(use-package consult
+  :init
+  (setq register-preview-delay 0.5
+	register-preview-function #'consult-register-format))
 
 ;; Embark
 (use-package embark
@@ -165,11 +168,11 @@
 
 (defun nadeemm/open-gitconfig ()
   (interactive)
-  (find-file "~/.gitconfig")) 
+  (find-file "~/.gitconfig"))
 
 (defun nadeemm/open-init-file ()
   (interactive)
-  (find-file (concat user-emacs-directory "init.el"))) 
+  (find-file (concat user-emacs-directory "init.el")))
 
 ;; Mimic the nice stuff in Doom with general.el
 (use-package general
@@ -197,7 +200,7 @@
     "c" '(:ignore t :which-key "Config")
     "c g" '(nadeemm/open-gitconfig :which-key "Open .gitconfig")
     "c i" '(nadeemm/open-init-file :which-key "Open init.el")
-    
+
     ;; Projectile
     "p" '(:ignore t :which-key "Projectile")
     "p ." '(projectile-find-file :which-key "Projectile find file")
@@ -234,6 +237,16 @@
 
     ;; Dired.
     "d" '(dired-jump :which-key "dired-jump")
+
+    ;; Registers
+    "r" '(:ignore t :which-key "Registers")
+    "r s" '(consult-register-store :which-key "Store register")
+    "r l" '(consult-register-load :which-key "Load register")
+    "r m" '(consult-bookmark :which-key "Bookmarks")
+
+    ;; Git
+    "g" '(:ignore t :which-key "Magit")
+    "g s" '(magit-status :which-key "Status")
 
     ;; LSP
     "l" '(:ignore t :which-key "LSP")
@@ -345,4 +358,4 @@
 ;; since LSP client-server communication generates a lot of output/garbage
 (setq gc-cons-threshold 100000000)
 ;; To increase the amount of data Emacs reads from a process
-(setq read-process-output-max (* 1024 1024)) 
+(setq read-process-output-max (* 1024 1024))
