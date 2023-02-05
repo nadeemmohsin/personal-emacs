@@ -40,71 +40,6 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-;; Natural zoom.
-(use-package emacs
-  :init
-  (global-set-key (kbd "C-=") 'text-scale-increase)
-  (global-set-key (kbd "C--") 'text-scale-decrease))
-
-
-;; Vertico
-(use-package vertico
-  :bind (:map vertico-map
-	      ("C-j" . vertico-next)
-	      ("C-k" . vertico-previous)
-	      :map minibuffer-local-map
-	      ("C-w" . backward-kill-word))
-  :custom
-  (vertico-cycle t)
-  :init
-  (vertico-mode))
-
-;; Marginalia
-(use-package marginalia
-  :after vertico
-  :bind (("M-A" . marginalia-cycle))
-  :custom
-  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :init
-  (marginalia-mode))
-
-;; Save history
-(use-package savehist
-  :init
-  (savehist-mode))
-
-;; Orderless for fuzzy completion.
-(use-package orderless
-  :init
-  (setq completion-styles '(substring orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
-
-;; Consult
-(use-package consult
-  :init
-  (setq register-preview-delay 0.5
-	register-preview-function #'consult-register-format))
-
-;; Embark
-(use-package embark
-  :bind
-  (("C-;" . embark-act)))
-
-(use-package embark-consult
-  :after (embark consult))
-
-
-;; Ace-window for easy window switching.
-(use-package ace-window
-  :init
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :bind (("M-o" . 'ace-window)))
-
-;; Helpful and which-key to make life easier.
-(use-package helpful
-  :commands (helpful-callable helpful-variable helpful-command helpful-key))
-
 
 ;; Some functions for going to frequently used files or buffers.
 (defun nadeemm/open-scratch-buffer ()
@@ -121,19 +56,25 @@
 
 ;; Mimic the nice stuff in Doom with general.el
 (use-package general
+  :demand t
   :config
-  (general-evil-setup t)
+  (general-evil-setup)
 
   ;; Set Space as the leader a la Doom.
+  ;; C-SPC for when we're in insert mode.
   (defconst nadeemm/leader "SPC")
+  (defconst nadeemm/global-leader "C-SPC")
+
   (general-create-definer nadeemm/leader-def
-    :prefix nadeemm/leader)
-  (general-override-mode) ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix nadeemm/leader
+    :global-prefix nadeemm/global-leader)
 
   ;; Doom-style hotkeys.
   (nadeemm/leader-def
-    :states '(motion normal visual)
-    :keymaps 'override ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
+    ;; :states '(motion normal visual)
+    ;; :keymaps 'override ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
 
     ;; Equivalent to C-u
     "u" '(universal-argument :which-key "Universal argument")
@@ -148,8 +89,7 @@
 
     ;; Projectile
     "p" '(:ignore t :which-key "Projectile")
-    "p ." '(projectile-find-file :which-key "Projectile find file")
-    "p >" '(projectile-find-file-other-window :which-key "Projectile find file (new window)")
+    ;; Remaining bindings in Projectile section.
 
     ;; Files.
     "." '(find-file :which-key "Find file")
@@ -181,7 +121,7 @@
     "s s" '(consult-line :which-key "Find line")
 
     ;; Dired.
-    "d" '(dired-jump :which-key "dired-jump")
+    "d" '(:ignore t :which-key "Dired")
 
     ;; Registers
     "r" '(:ignore t :which-key "Registers")
@@ -191,14 +131,11 @@
 
     ;; Git
     "g" '(:ignore t :which-key "Magit")
-    "g s" '(magit-status :which-key "Status")
+    ;; Remaining bindings in magit section.
 
     ;; LSP
     "l" '(:ignore t :which-key "LSP")
-    "l." '(lsp-find-definition :which-key "Find definition")
-    "l >" '(lsp-find-references :which-key "Find references")
-    "l r" '(lsp-rename :which-key "Rename")
-    "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol")
+    ;; Remaining bindings in LSP section.
 
     ;; help
     "h" '(:ignore t :which-key "Help")
@@ -210,27 +147,6 @@
     "h F" '(describe-face :which-key "Describe face")
     "h w" '(where-is :which-key "where-is")
     "h ." '(display-local-help :which-key "Display local help")))
-
-
-
-
-(use-package which-key
-  :defer 0
-  :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-max-display-columns 6)
-  (setq which-key-idle-delay 0.5))
-
-;; Themes and Modelines
-(use-package doom-themes
-  :init (load-theme 'doom-one t))
-
-(use-package all-the-icons)
-
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
 
 
 ;; Evil mode
@@ -293,10 +209,102 @@
   :config
   (evil-commentary-mode))
 
+
+;; Natural zoom.
+(use-package emacs
+  :general
+  ("C-=" 'text-scale-increase)
+  ("C--" 'text-scale-decrease))
+
+
+;; Vertico
+(use-package vertico
+  :bind (:map vertico-map
+	      ("C-j" . vertico-next)
+	      ("C-k" . vertico-previous)
+	      :map minibuffer-local-map
+	      ("C-w" . backward-kill-word))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
+
+;; Marginalia
+(use-package marginalia
+  :after vertico
+  :bind (("M-A" . marginalia-cycle))
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+
+;; Save history
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Orderless for fuzzy completion.
+(use-package orderless
+  :init
+  (setq completion-styles '(substring orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+;; Consult
+(use-package consult
+  :init
+  (setq register-preview-delay 0.5
+	register-preview-function #'consult-register-format))
+
+;; Embark
+(use-package embark
+  :bind
+  (("C-;" . embark-act)))
+
+(use-package embark-consult
+  :after (embark consult))
+
+
+;; Ace-window for easy window switching.
+(use-package ace-window
+  :init
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :bind (("M-o" . 'ace-window)))
+
+;; Helpful and which-key to make life easier.
+(use-package helpful
+  :commands (helpful-callable helpful-variable helpful-command helpful-key))
+
+(use-package which-key
+  :defer 0
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+  (setq which-key-max-display-columns 6)
+  (setq which-key-idle-delay 0.5))
+
+
+
+
+;; Themes and Modelines
+(use-package doom-themes
+  :init (load-theme 'doom-one t))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+
 ;; Dired setup.
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
+  :general
+  (nadeemm/leader-def
+    "d j" '(dired-jump :which-key "Open buffer directory")
+    "d p" '(projectile-dired :whic-key "Open project root"))
   :custom ((dired-listing-switches "-agho --group-directories-first"))
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
@@ -310,12 +318,7 @@
   :hook (dired-mode . all-the-icons-dired-mode))
 
 (use-package dired-open
-  :commands (dired dired-jump)
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  (setq dired-open-extensions '(("png" . "feh")
-                                ("mkv" . "mpv"))))
+  :commands (dired dired-jump))
 
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -368,6 +371,12 @@
 ;; $ go get golang.org/x/tools/gopls@latest
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
+  :general
+  (nadeemm/leader-def 
+    "l ." '(lsp-find-definition :which-key "Find definition")
+    "l >" '(lsp-find-references :which-key "Find references")
+    "l r" '(lsp-rename :which-key "Rename")
+    "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol"))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
@@ -385,3 +394,18 @@
 (setq gc-cons-threshold 100000000)
 ;; To increase the amount of data Emacs reads from a process
 (setq read-process-output-max (* 1024 1024))
+
+;; Magit
+(use-package magit
+  :general
+  (nadeemm/leader-def
+    "g s" '(magit-status :which-key "Status")
+    "g b" '(magit-blame :which-key "Blame")
+    "g l" '(magit-log :which-key "Log")))
+
+;; Projectile
+(use-package projectile
+  :general
+  (nadeemm/leader-def
+    "p ." '(projectile-find-file :which-key "Find file")
+    "p >" '(projectile-find-file-other-window :which-key "Find file (new window)")))
