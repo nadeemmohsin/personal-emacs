@@ -159,6 +159,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
+  (setq evil-undo-system 'undo-fu)
 
   :config
   (evil-mode 1)
@@ -212,6 +213,22 @@
   :config
   (evil-commentary-mode))
 
+;; Evil-goggles to make changes more obvious.
+(use-package evil-goggles
+  :after evil
+  :demand
+  :init
+  (setq evil-goggles-duration 0.05)
+  :config
+  (push '(evil-operator-eval
+          :face evil-goggles-yank-face
+          :switch evil-goggles-enable-yank
+          :advice evil-goggles--generic-async-advice)
+        evil-goggles--commands)
+  (evil-goggles-mode)
+  (evil-goggles-use-diff-faces))
+
+
 ;; Use Avy to move around the page really fast.
 (use-package avy
   :general
@@ -222,6 +239,15 @@
     "a l" '(avy-goto-line :which-key "Go to line")
     "a s" '(avy-goto-char-timer :which-key "Find by prefix")))
 
+
+;; Undo fu
+(use-package undo-fu
+  :demand
+  :general
+  ;; Bind these to the Evil shortcuts.
+  (:states 'normal
+	   "u" 'undo-fu-only-undo
+	   "C-r" 'undo-fu-only-redo))
 
 ;; Natural zoom.
 (use-package emacs
