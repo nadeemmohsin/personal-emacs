@@ -99,6 +99,9 @@
     "," '(consult-buffer :which-key "Switch buffer")
     "x" '(nadeemm/open-scratch-buffer :which-key "Open scratch buffer")
 
+    "a" '(:ignore t :which-key "Avy")
+    ;; Remaining bindings in Avy config.
+
     "b" '(:ignore t :which-key "Buffers")
     "b b" '(consult-buffer :which-key "Switch buffer")
     "b B" '(ibuffer-list-buffers :which-key "Interactive buffer list")
@@ -108,8 +111,8 @@
     "b r" '(revert-buffer-quick :which-key "Revert buffer")
 
     ;; Window management.
-    "o" '(other-window :which-key "Switch window")
-    "O" '(ace-window :which-key "Find window")
+    "o" '(other-window :which-key "Cycle window")
+    "O" '(ace-window :which-key "Switch window")
     "w" '(:ignore t :which-key "Windows")
     "w h" '(evil-window-split :which-key "Horizontal split")
     "w v" '(evil-window-vsplit :which-key "Vertical split")
@@ -208,6 +211,16 @@
   :after evil
   :config
   (evil-commentary-mode))
+
+;; Use Avy to move around the page really fast.
+(use-package avy
+  :general
+  (:states 'normal
+	   "s" 'avy-goto-char-2)
+  (nadeemm/leader-def
+    "a a" '(avy-goto-char-2 :which-key "Find bigram")
+    "a l" '(avy-goto-line :which-key "Go to line")
+    "a s" '(avy-goto-char-timer :which-key "Find by prefix")))
 
 
 ;; Natural zoom.
@@ -372,7 +385,7 @@
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :general
-  (nadeemm/leader-def 
+  (nadeemm/leader-def
     "l ." '(lsp-find-definition :which-key "Find definition")
     "l >" '(lsp-find-references :which-key "Find references")
     "l r" '(lsp-rename :which-key "Rename")
