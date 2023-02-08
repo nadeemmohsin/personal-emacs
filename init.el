@@ -297,8 +297,11 @@
 
 ;; Embark
 (use-package embark
-  :bind
-  (("C-;" . embark-act)))
+  :after vertico
+  :general
+  (general-nmap "C-l" 'embark-act)
+  (vertico-map
+   "C-l" #'embark-act))
 
 (use-package embark-consult
   :after (embark consult))
