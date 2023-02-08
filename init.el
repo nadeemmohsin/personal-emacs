@@ -285,7 +285,7 @@
 ;; Orderless for fuzzy completion.
 (use-package orderless
   :init
-  (setq completion-styles '(substring orderless basic)
+  (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
@@ -305,6 +305,42 @@
 
 (use-package embark-consult
   :after (embark consult))
+
+;; Corfu.
+(use-package corfu
+  :hook ((prog-mode .corfu-mode))
+  :bind
+  :general
+  ;; Prevent the Emacs kill-line binding from conflicting with corfu-previous.
+  (evil-insert-state-map "C-k" nil)
+  (:keymaps 'corfu-map
+	    ;; Basic keybindings for completion popup.
+	    "C-j" #'corfu-next
+	    "C-k" #'corfu-previous
+	    "M-h" #'corfu-info-documentation
+	    ;; For orderless style completion.
+	    "SPC" #'corfu-insert-separator)
+  :custom
+  (corfu-cycle t)
+  (corfu-quit-at-boundary nil)
+  (corfu-min-width 80)
+  (corfu-max-width corfu-min-width) ;; Always use same width.
+  (corfu-preselect-first t)
+  (corfu-preview-current 'insert)
+  ;; Use corfu for LSP completions.
+  (lsp-completion-provider :none))
+
+
+;; Kind-icon to make Corfu look a bit nicer.
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-use-icons t)
+  (kind-icon-defalut-face 'corfu-default)
+  (kind-icon-blend-background nil)
+  (kind-icon-blend-frac 0.08)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 
 ;; Ace-window for easy window switching.
@@ -450,4 +486,6 @@
   :general
   (nadeemm/leader-def
     "p ." '(projectile-find-file :which-key "Find file")
-    "p >" '(projectile-find-file-other-window :which-key "Find file (new window)")))
+    "p >" '(projectile-find-file-other-window :which-key "Find file (new window)"))
+  :custom
+  (projectile-project-search-path '("~/repos")))
