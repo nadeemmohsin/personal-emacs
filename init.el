@@ -1,29 +1,3 @@
-;; Basic UI customizations.
-(setq inhibit-startup-message t)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(menu-bar-mode -1)
-
-;; Fix the default jerky scrolling.
-(setq scroll-step 1)
-
-;; Use y/n instead of overly cumbersome yes/no.
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; Overwrite selection on paste.
-(delete-selection-mode t)
-
-;; Follow symlinks automatically.
-(setq vc-follow-symlinks t)
-
-;; Put backup files in a separate directory.
-(setq backup-directory-alist `(("." . "~/.emacs.bak")))
-
-;; Keep customized variables in a separate file.
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(load custom-file 'noerror)
-
 ;; Initialize package archives.
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -39,6 +13,87 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; Basic customizations.
+(use-package emacs
+  :init
+  ;; UI defaults.
+  (setq inhibit-startup-message t
+	initial-scratch-message nil
+	sentence-end-double-space nil
+	scroll-step 1)
+
+  ;; Turn off unnecessary frills.
+  (when (window-system)
+    (scroll-bar-mode -1)
+    (tool-bar-mode -1)
+    (tooltip-mode -1)
+    (menu-bar-mode -1))
+
+  ;; Use y/n instead of overly cumbersome yes/no.
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
+  ;; Give backup files their own directory, and custom vars their own file.
+  (setq backup-directory-alist `(("." . "~/.emacs.bak"))
+	custom-file (concat user-emacs-directory "custom.el"))
+  (load custom-file 'noerror)
+
+  ;; Uniquify buffer names.
+  (setq uniquify-buffer-name-style 'forward)
+  (setq uniquify-after-kill-buffer-p t)     ;; Rename after killing uniquified buffers.
+  (setq uniquify-ignore-buffers-re "^\\*")  ;; Don't mess with special buffers.
+
+  ;; Show column numbers everywhere.
+  (column-number-mode)
+
+  ;; Overwrite selection on paste.
+  (delete-selection-mode t)
+
+  ;; Highlight current line.
+  (global-hl-line-mode 1)
+
+  ;; Line numbers everywhere except for shells and Org.
+  (global-display-line-numbers-mode t)
+  (dolist (mode '(org-mode-hook
+		  term-mode-hook
+		  vterm-mode-hook
+		  shell-mode-hook
+		  eshell-mode-hook
+		  dired-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  ;; Auto revert buffers.
+  (global-auto-revert-mode)
+
+  ;; Follow symlinks automatically.
+  (setq vc-follow-symlinks t)
+
+  ;; Recent files mode.
+  (recentf-mode t)
+
+  ;; Winner mode to remember window states.
+  (winner-mode t)
+
+  ;; Use TAB for indentation and completion.
+  (setq tab-always-indent 'complete)
+
+  ;; Set the garbage collection threshold to high (100 MB) since LSP
+  ;; client-server communication generates a lot of output/garbage
+  (setq gc-cons-threshold 100000000)
+
+  ;; To increase the amount of data Emacs reads from a process
+  (setq read-process-output-max (* 1024 1024)))
+
+
+;; Themes and Modelines
+(use-package doom-themes
+  :init (load-theme 'doom-one t))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
 
 
 ;; Some functions for going to frequently used files or buffers.
@@ -362,19 +417,6 @@
   (setq which-key-idle-delay 0.5))
 
 
-
-
-;; Themes and Modelines
-(use-package doom-themes
-  :init (load-theme 'doom-one t))
-
-(use-package all-the-icons)
-
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
-
-
 ;; Dired setup.
 (use-package dired
   :ensure nil
@@ -404,34 +446,10 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
-;; Highlight current line.
-(global-hl-line-mode 1)
 
 ;; Rainbow delimiters
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-
-;; Auto revert buffers.
-(global-auto-revert-mode)
-
-;; Uniquify buffer names.
-(setq uniquify-buffer-name-style 'forward)
-(setq uniquify-after-kill-buffer-p t)     ;; Rename after killing uniquified buffers.
-(setq uniquify-ignore-buffers-re "^\\*")  ;; Don't mess with special buffers.
-
-;; Show column numbers everywhere.
-(column-number-mode)
-
-;; Line numbers everywhere except for shells and Org.
-(global-display-line-numbers-mode t)
-
-(dolist (mode '(org-mode-hook
-		term-mode-hook
-		vterm-mode-hook
-		shell-mode-hook
-		eshell-mode-hook
-		dired-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 
 ;; Go programming support.
@@ -467,11 +485,6 @@
   :config
   (setq lsp-ui-doc-enable t))
 
-;; Set the garbage collection threshold to high (100 MB)
-;; since LSP client-server communication generates a lot of output/garbage
-(setq gc-cons-threshold 100000000)
-;; To increase the amount of data Emacs reads from a process
-(setq read-process-output-max (* 1024 1024))
 
 ;; Magit
 (use-package magit
