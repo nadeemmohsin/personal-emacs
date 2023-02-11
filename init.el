@@ -498,7 +498,10 @@
   (nadeemm/leader-def
     "g s" '(magit-status :which-key "Status")
     "g b" '(magit-blame :which-key "Blame")
-    "g l" '(magit-log :which-key "Log")))
+    "g l" '(magit-log :which-key "Log"))
+  :init
+  (setq magit-log-arguments '("--graph" "--decorate" "--color")
+	git-commit-fill-column 80))
 
 ;; Projectile
 (use-package projectile
