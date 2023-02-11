@@ -21,14 +21,14 @@
   (setq inhibit-startup-message t
 	initial-scratch-message nil
 	sentence-end-double-space nil
-	scroll-step 1)
+	scroll-step 1
+	scroll-conservatively 101)
 
   ;; Turn off unnecessary frills.
-  (when (window-system)
-    (scroll-bar-mode -1)
-    (tool-bar-mode -1)
-    (tooltip-mode -1)
-    (menu-bar-mode -1))
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (menu-bar-mode -1)
 
   ;; Use y/n instead of overly cumbersome yes/no.
   (defalias 'yes-or-no-p 'y-or-n-p)
@@ -77,6 +77,9 @@
   ;; Use TAB for indentation and completion.
   (setq tab-always-indent 'complete)
 
+  ;; Close parens automatically. 
+  (electric-pair-mode 1)
+
   ;; Set the garbage collection threshold to high (100 MB) since LSP
   ;; client-server communication generates a lot of output/garbage
   (setq gc-cons-threshold 100000000)
@@ -94,6 +97,13 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
+
+
+;; Ace-window for easy window switching.
+(use-package ace-window
+  :init
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :bind (("M-o" . 'ace-window)))
 
 
 ;; Some functions for going to frequently used files or buffers.
@@ -397,12 +407,6 @@
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-
-;; Ace-window for easy window switching.
-(use-package ace-window
-  :init
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :bind (("M-o" . 'ace-window)))
 
 ;; Helpful and which-key to make life easier.
 (use-package helpful
