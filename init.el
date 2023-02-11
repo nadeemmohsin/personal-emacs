@@ -500,9 +500,13 @@
 
 ;; Projectile
 (use-package projectile
+  :demand
   :general
   (nadeemm/leader-def
-    "p ." '(projectile-find-file :which-key "Find file")
-    "p >" '(projectile-find-file-other-window :which-key "Find file (new window)"))
+    "p" '(:keymap projectile-command-map :which-key "project")
+    "p <escape>" 'keyboard-escape-quit
+    "p a" '(projectile-add-known-project :wk "add known"))
   :custom
-  (projectile-project-search-path '("~/repos")))
+  (projectile-project-search-path '("~/repos"))
+  :config
+  (projectile-mode))
