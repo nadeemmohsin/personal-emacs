@@ -138,9 +138,7 @@
 
   ;; Doom-style hotkeys.
   (nadeemm/leader-def
-    ;; :states '(motion normal visual)
-    ;; :keymaps 'override ;; https://github.com/noctuid/general.el/issues/99#issuecomment-360914335
-
+    "SPC" '(execute-extended-command :which-key "Execute command")
     ;; Equivalent to C-u
     "u" '(universal-argument :which-key "Universal argument")
 
