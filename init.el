@@ -428,15 +428,17 @@
   :general
   (nadeemm/leader-def
     "d j" '(dired-jump :which-key "Open buffer directory")
-    "d p" '(projectile-dired :whic-key "Open project root"))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
-  :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer))
+    "d p" '(projectile-dired :which-key "Open project root"))
+  :custom ((dired-listing-switches "-agho --group-directories-first")))
 
 (use-package dired-single
-  :commands (dired dired-jump))
+  :after dired
+  :general
+  (dired-mode-map
+   :states 'normal
+   "h" 'dired-single-up-directory
+   "l" 'dired-single-buffer
+   "q" 'kill-current-buffer))
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
