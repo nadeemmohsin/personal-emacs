@@ -374,9 +374,12 @@
 (use-package embark-consult
   :after (embark consult))
 
+(use-package yasnippet
+  :hook
+  (prog-mode . yas-minor-mode))
+
 ;; Corfu.
 (use-package corfu
-  :hook ((prog-mode .corfu-mode))
   :bind
   :general
   ;; Prevent the Emacs kill-line binding from conflicting with corfu-previous.
@@ -465,7 +468,7 @@
 
 ;; Go programming support.
 (use-package go-mode
-  :ensure t
+  :hook ((go-mode . flycheck-mode))
   :config
   (require 'lsp-go))
 
