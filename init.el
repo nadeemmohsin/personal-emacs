@@ -89,8 +89,13 @@
 
 
 ;; Themes and Modelines
-(use-package doom-themes
-  :init (load-theme 'doom-one t))
+;; (use-package doom-themes
+;;   :init (load-theme 'doom-one t))
+
+(use-package vscode-dark-plus-theme
+  :ensure t
+  :config
+  (load-theme 'vscode-dark-plus t))
 
 (use-package all-the-icons)
 
@@ -350,7 +355,7 @@
   :init
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 ;; Consult
 (use-package consult
@@ -391,7 +396,9 @@
   (corfu-preselect-first t)
   (corfu-preview-current 'insert)
   ;; Use corfu for LSP completions.
-  (lsp-completion-provider :none))
+  (lsp-completion-provider :none)
+  :init
+  (global-corfu-mode))
 
 
 ;; Kind-icon to make Corfu look a bit nicer.
@@ -457,7 +464,10 @@
 
 
 ;; Go programming support.
-(use-package go-mode)
+(use-package go-mode
+  :ensure t
+  :config
+  (require 'lsp-go))
 
 ;; Protobuf-mode isn't in a package repository, so we
 ;; pull it from our own unpackaged directory.
@@ -475,6 +485,7 @@
   (nadeemm/leader-def
     "l ." '(lsp-find-definition :which-key "Find definition")
     "l >" '(lsp-find-references :which-key "Find references")
+    "l a" '(lsp-execute-code-action :which-key "Execute code action")
     "l r" '(lsp-rename :which-key "Rename")
     "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol"))
   :init
