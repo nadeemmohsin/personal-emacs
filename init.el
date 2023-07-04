@@ -49,9 +49,6 @@
   ;; Overwrite selection on paste.
   (delete-selection-mode t)
 
-  ;; Highlight current line.
-  (global-hl-line-mode 1)
-
   ;; Line numbers everywhere except for shells and Org.
   (global-display-line-numbers-mode t)
   (dolist (mode '(org-mode-hook
