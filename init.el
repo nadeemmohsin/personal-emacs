@@ -86,13 +86,8 @@
 
 
 ;; Themes and Modelines
-;; (use-package doom-themes
-;;   :init (load-theme 'doom-one t))
-
-(use-package vscode-dark-plus-theme
-  :ensure t
-  :config
-  (load-theme 'vscode-dark-plus t))
+(use-package doom-themes
+  :init (load-theme 'doom-1337 t))
 
 (use-package all-the-icons)
 
@@ -511,6 +506,7 @@
   ((go-mode) . lsp))
 
 (use-package lsp-ui
+  :after lsp
   :hook (lsp-mode . lsp-ui-mode)
   :config
   (setq lsp-ui-doc-enable t))
