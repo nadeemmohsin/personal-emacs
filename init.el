@@ -379,6 +379,7 @@
 (use-package embark-consult
   :after (embark consult))
 
+;; Yasnippet
 (use-package yasnippet
   :hook
   (prog-mode . yas-minor-mode))
@@ -497,11 +498,14 @@
   :commands (lsp lsp-deferred)
   :general
   (nadeemm/leader-def
-    "l ." '(lsp-find-definition :which-key "Find definition")
-    "l >" '(lsp-find-references :which-key "Find references")
+    "l l" '(:keymap lsp-command-map :which-key "All commands")
+    "l ." '(lsp-ui-peek-find-definitions :which-key "Find definition")
+    "l t" '(lsp-find-type-definition :which-key "Find type definition")
+    "l >" '(lsp-ui-peek-find-references :which-key "Find references")
     "l a" '(lsp-execute-code-action :which-key "Execute code action")
-    "l r" '(lsp-rename :which-key "Rename")
-    "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol"))
+    "l d" '(lsp-describe-thing-at-point :which-key "Describe symbol")
+    "l g" '(lsp-ui-doc-glance :which-key "Doc glance")
+    "l r" '(lsp-rename :which-key "Rename"))
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
