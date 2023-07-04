@@ -148,7 +148,8 @@
     "u" '(universal-argument :which-key "Universal argument")
 
     ;; Eval Lisp regions.
-    ";" '(eval-region :which-key "eval-region")
+    ";" '(eval-last-sexp :which-key "Evaluate last sexp")
+    ":" '(eval-defun :which-key "Evaluate defun")
 
     ;; Config
     "c" '(:ignore t :which-key "Config")
