@@ -209,6 +209,10 @@
     "l" '(:ignore t :which-key "LSP")
     ;; Remaining bindings in LSP section.
 
+    ;; Flycheck
+    "f" '(:ignore t :which-key "Flycheck")
+    ;; Remaining bindings in Flycheck section.
+
     ;; help
     "h" '(:ignore t :which-key "Help")
     "h f" '(helpful-callable :which-key "Describe function")
@@ -469,9 +473,15 @@
 
 ;; Go programming support.
 (use-package go-mode
-  :hook ((go-mode . flycheck-mode))
   :config
   (require 'lsp-go))
+
+;; Flycheck.
+(use-package flycheck
+  :hook ((go-mode . flycheck-mode))
+  :general
+  (nadeemm/leader-def
+    "f" '(:keymap flycheck-command-map :which-key "Flycheck")))
 
 ;; Protobuf-mode isn't in a package repository, so we
 ;; pull it from our own unpackaged directory.
