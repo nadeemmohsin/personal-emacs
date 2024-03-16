@@ -87,7 +87,7 @@
 
 ;; Themes and Modelines
 (use-package doom-themes
-  :init (load-theme 'doom-1337 t))
+  :init (load-theme 'doom-tomorrow-night t))
 
 (use-package all-the-icons)
 
@@ -184,6 +184,8 @@
     "s" '(:ignore t :which-key "Search")
     "s s" '(consult-line :which-key "Find line")
 
+    ;; Quick navigation with avy.
+    "j" '(avy-goto-char-timer :which-key "Find by prefix") 
     ;; Dired.
     "d" '(:ignore t :which-key "Dired")
 
@@ -433,7 +435,7 @@
   :commands (dired dired-jump)
   :general
   (nadeemm/leader-def
-    "d j" '(dired-jump :which-key "Open buffer directory")
+    "d ." '(dired-jump :which-key "Open buffer directory")
     "d p" '(projectile-dired :which-key "Open project root"))
   :custom ((dired-listing-switches "-agho --group-directories-first")))
 
@@ -469,12 +471,19 @@
   :config
   (require 'lsp-go))
 
+;; Terraform support.
+(use-package terraform-mode)
+
 ;; Flycheck.
 (use-package flycheck
   :hook ((go-mode . flycheck-mode))
   :general
   (nadeemm/leader-def
     "f" '(:keymap flycheck-command-map :which-key "Flycheck")))
+
+(use-package flycheck-inline
+  :after flycheck
+  :hook ((flycheck-mode . flycheck-inline-mode)))
 
 ;; Protobuf-mode isn't in a package repository, so we
 ;; pull it from our own unpackaged directory.
